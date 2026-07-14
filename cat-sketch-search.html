@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CAT Sketch Search™ | Field Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================================
+   CAT SKETCH SEARCH™ — DESIGN SYSTEM TOKENS
+   ============================================================================ */
+:root{
+  --cat-yellow:#FFCD11;
+  --cat-yellow-dim:#E0B300;
+  --ink:#111111;
+  --mud-900:#201D1A;
+  --mud-800:#2D2A26;
+  --mud-700:#3A3A3A;
+  --mud-600:#4A453C;
+  --steel:#5A564C;
+  --white:#FFFFFF;
+  --gray-100:#ECECEC;
+  --sand:#F5F3EE;
+  --sand-dim:#C9C3B6;
+  --green:#2FA84F;
+  --orange:#E67E22;
+  --red:#D32F2F;
+  --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --font-d:'Oswald',sans-serif;
+  --font-b:'Inter',sans-serif;
+  --ease-spring: cubic-bezier(.22,.9,.32,1.1);
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; height:100%; background:#0F0E0C; font-family:var(--font-b); -webkit-tap-highlight-color:transparent; }
+button{ font-family:inherit; }
+:focus-visible{ outline:3px solid var(--cat-yellow); outline-offset:2px; }
+
+.stage{ min-height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:28px 14px;
+  background: radial-gradient(1200px 600px at 50% -10%, #232019 0%, #0F0E0C 60%); }
+.stage-label{ font-family:var(--font-d); color:var(--sand-dim); letter-spacing:3px; font-size:11px; text-transform:uppercase; opacity:.7; text-align:center; }
+
+/* ============================== PHONE FRAME ============================== */
+.phone{ position:relative; width:390px; max-width:92vw; height:844px; max-height:90vh;
+  background:linear-gradient(180deg,#0f0e0c,#060605); border-radius:46px; padding:14px;
+  box-shadow:0 40px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04) inset; }
+.phone::before{ content:''; position:absolute; top:26px; left:50%; transform:translateX(-50%); width:90px; height:8px; border-radius:6px; background:#000; opacity:.6; z-index:20; }
+.screen{ position:relative; width:100%; height:100%; background:var(--mud-800); border-radius:32px; overflow:hidden;
+  display:flex; flex-direction:column; box-shadow:0 0 0 2px #000; }
+
+/* ============================== HEADER ============================== */
+.app-header{ flex-shrink:0; padding:26px 18px 12px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--mud-600); background:var(--mud-800); z-index:5; }
+.brand-tag{ display:flex; align-items:center; gap:9px; }
+.brand-mark{ width:32px; height:32px; border-radius:8px; background:var(--cat-yellow); display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-d); font-weight:700; color:var(--ink); font-size:15px; }
+.brand-copy h1{ margin:0; font-family:var(--font-d); font-size:14.5px; letter-spacing:.5px; color:var(--sand); text-transform:uppercase; line-height:1.1; }
+.brand-copy p{ margin:1px 0 0; font-size:10.5px; color:var(--sand-dim); letter-spacing:.4px; }
+.header-right{ display:flex; align-items:center; gap:8px; }
+.points-pill{ font-family:var(--font-d); font-size:11px; letter-spacing:.4px; color:var(--cat-yellow); background:rgba(255,205,17,.1);
+  border:1px solid rgba(255,205,17,.3); padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:5px; }
+
+/* ============================== VIEW SWITCHER ============================== */
+.view{ flex:1; min-height:0; display:none; flex-direction:column; }
+.view.active{ display:flex; }
+
+/* ============================== BOTTOM NAV ============================== */
+.bottom-nav{ flex-shrink:0; display:flex; border-top:1px solid var(--mud-600); background:var(--mud-800); z-index:15; }
+.nav-btn{ flex:1; background:none; border:none; padding:10px 4px 14px; display:flex; flex-direction:column; align-items:center; gap:4px;
+  color:var(--sand-dim); cursor:pointer; min-height:48px; }
+.nav-btn svg{ opacity:.7; }
+.nav-btn span{ font-family:var(--font-b); font-size:10.5px; font-weight:600; letter-spacing:.2px; }
+.nav-btn.active{ color:var(--cat-yellow); }
+.nav-btn.active svg{ opacity:1; }
+.nav-btn.active svg *{ stroke:var(--cat-yellow); }
+
+/* ============================================================================
+   SHARED COMPONENTS — Design System
+   ============================================================================ */
+.btn-primary{ height:56px; border-radius:var(--r-md); border:none; background:var(--cat-yellow); color:var(--ink);
+  font-family:var(--font-d); font-weight:700; font-size:15px; letter-spacing:.8px; text-transform:uppercase;
+  display:flex; align-items:center; justify-content:center; gap:9px; cursor:pointer; min-height:48px;
+  box-shadow:0 8px 20px rgba(255,205,17,.22), 0 2px 0 var(--cat-yellow-dim) inset;
+  transition:transform .12s var(--ease-spring), opacity .2s ease; }
+.btn-primary:active{ transform:scale(.97); }
+.btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
+.btn-secondary{ height:48px; border-radius:var(--r-sm); border:1px solid var(--mud-600); background:var(--mud-700); color:var(--sand);
+  font-weight:600; font-size:13px; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; min-height:48px; }
+.btn-secondary:active{ transform:scale(.96); }
+.spinner{ width:18px; height:18px; border-radius:50%; border:3px solid rgba(17,17,17,.25); border-top-color:var(--ink); animation:spin .7s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+.badge{ font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:4px 9px; border-radius:20px; display:inline-flex; align-items:center; gap:5px; }
+.badge.high{ background:rgba(47,168,79,.14); color:#5FD97F; border:1px solid rgba(47,168,79,.4); }
+.badge.mid{ background:rgba(255,205,17,.14); color:var(--cat-yellow); border:1px solid rgba(255,205,17,.4); }
+.badge.low{ background:rgba(255,255,255,.06); color:var(--sand-dim); border:1px solid var(--mud-600); }
+
+.toast{ position:absolute; left:50%; bottom:18px; transform:translate(-50%,20px); background:var(--sand); color:var(--ink);
+  font-weight:700; font-size:12px; padding:10px 18px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,.4);
+  opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease; z-index:60; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+.toast.show{ opacity:1; transform:translate(-50%,0); }
+
+/* Bottom sheet (shared pattern) */
+.sheet-backdrop{ position:absolute; inset:0; background:rgba(10,9,7,.55); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:30; }
+.sheet-backdrop.show{ opacity:1; pointer-events:auto; }
+.sheet{ position:absolute; left:0; right:0; bottom:0; max-height:84%; background:var(--mud-800); border-top:1px solid var(--mud-600);
+  border-radius:24px 24px 0 0; box-shadow:0 -20px 50px rgba(0,0,0,.5); transform:translateY(105%);
+  transition:transform .4s var(--ease-spring); z-index:31; display:flex; flex-direction:column; }
+.sheet.open{ transform:translateY(0); }
+.sheet-grabber{ width:42px; height:5px; border-radius:4px; background:var(--mud-600); margin:12px auto 2px; flex-shrink:0; }
+.sheet-close{ position:absolute; top:8px; right:12px; width:32px; height:32px; border-radius:50%; background:var(--mud-700);
+  border:1px solid var(--mud-600); color:var(--sand); font-size:16px; display:flex; align-items:center; justify-content:center; cursor:pointer; min-height:32px; }
+
+/* ============================================================================
+   TAB 2 — SKETCH SEARCH
+   ============================================================================ */
+.search-scroll{ flex:1; min-height:0; display:flex; flex-direction:column; }
+.section-title{ padding:14px 18px 2px; }
+.section-title h2{ margin:0; font-family:var(--font-d); font-size:17px; letter-spacing:.4px; color:var(--sand); text-transform:uppercase; }
+.section-title p{ margin:3px 0 0; font-size:12px; color:var(--sand-dim); }
+
+.canvas-wrap{ position:relative; flex:1; margin:12px 16px 6px; border-radius:var(--r-lg);
+  background:radial-gradient(120% 100% at 50% 0%,#35312A 0%,#2A2620 55%,#24211C 100%);
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.55), inset 0 0 60px rgba(0,0,0,.25); overflow:hidden; touch-action:none; min-height:180px; }
+.grit-overlay{ position:absolute; inset:0; pointer-events:none; mix-blend-mode:overlay; opacity:.5;
+  background-image:radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.06) 0, transparent 60%), radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,.05) 0, transparent 60%), radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.04) 0, transparent 60%), radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,.05) 0, transparent 60%);
+  background-size:180px 180px; }
+canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+.canvas-hint{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px;
+  color:var(--sand-dim); pointer-events:none; transition:opacity .25s ease; text-align:center; padding:0 30px; }
+.canvas-hint.hidden{ opacity:0; }
+.canvas-hint strong{ color:var(--sand); font-family:var(--font-d); font-size:13.5px; letter-spacing:.5px; text-transform:uppercase; }
+.canvas-hint span{ font-size:12.5px; font-weight:500; }
+
+.scan-sweep{ position:absolute; inset:0; pointer-events:none; opacity:0; }
+.scan-sweep.active{ opacity:1; }
+.scan-line{ position:absolute; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,var(--cat-yellow),transparent);
+  box-shadow:0 0 16px 2px rgba(255,205,17,.8); animation:sweep 1.5s linear; }
+@keyframes sweep{ 0%{top:0%;opacity:0;} 10%{opacity:1;} 90%{opacity:1;} 100%{top:100%;opacity:0;} }
+.scan-label{ position:absolute; bottom:12px; left:0; right:0; text-align:center; font-family:var(--font-d); font-size:12px; letter-spacing:1.5px;
+  text-transform:uppercase; color:var(--cat-yellow); text-shadow:0 0 12px rgba(255,205,17,.5); }
+
+/* live preview strip */
+.live-preview{ padding:0 16px; margin-top:2px; display:flex; gap:8px; overflow-x:auto; max-height:0; opacity:0; transition:max-height .25s ease, opacity .2s ease; }
+.live-preview.show{ max-height:56px; opacity:1; margin-bottom:6px; }
+.preview-chip{ flex-shrink:0; display:flex; align-items:center; gap:6px; background:var(--mud-700); border:1px solid var(--mud-600);
+  border-radius:20px; padding:6px 10px 6px 6px; }
+.preview-chip .dot{ width:22px; height:22px; border-radius:50%; background:var(--mud-800); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.preview-chip .dot svg{ width:14px; height:14px; }
+.preview-chip .txt{ font-size:10.5px; color:var(--sand-dim); font-weight:600; white-space:nowrap; }
+.preview-chip .pct{ color:var(--cat-yellow); font-weight:700; }
+
+.toolbar{ flex-shrink:0; display:flex; gap:8px; padding:2px 16px 10px; }
+.tool-btn{ flex:1; display:flex; align-items:center; justify-content:center; gap:7px; height:48px; border-radius:var(--r-md);
+  border:1px solid var(--mud-600); background:var(--mud-700); color:var(--sand); font-weight:600; font-size:12.5px; cursor:pointer; min-height:48px; }
+.tool-btn:active{ transform:scale(.96); }
+.tool-btn.undo{ flex:0 0 48px; } .tool-btn.undo span{ display:none; }
+
+.search-zone{ flex-shrink:0; padding:0 16px 12px; }
+
+/* Result sheet content */
+.filter-row{ display:flex; gap:7px; padding:10px 16px 4px; overflow-x:auto; flex-shrink:0; }
+.filter-chip{ flex-shrink:0; font-size:11.5px; font-weight:600; color:var(--sand-dim); background:var(--mud-700);
+  border:1px solid var(--mud-600); border-radius:20px; padding:7px 13px; cursor:pointer; min-height:32px; }
+.filter-chip.active{ background:var(--cat-yellow); color:var(--ink); border-color:var(--cat-yellow); }
+
+.results-list{ overflow-y:auto; padding:8px 14px 20px; display:flex; flex-direction:column; gap:11px; -webkit-overflow-scrolling:touch; }
+.result-card{ background:var(--mud-700); border:1px solid var(--mud-600); border-radius:var(--r-md); padding:13px; display:flex; flex-direction:column; gap:10px;
+  animation:cardIn .35s ease both; }
+@keyframes cardIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+.result-top{ display:flex; gap:11px; }
+.result-thumb{ flex-shrink:0; width:64px; height:64px; border-radius:var(--r-sm); background:linear-gradient(160deg,#24211c,#171512);
+  border:1px solid var(--mud-600); display:flex; align-items:center; justify-content:center; }
+.result-thumb svg{ width:42px; height:42px; }
+.result-meta{ flex:1; min-width:0; }
+.result-name{ margin:0 0 2px; font-weight:700; font-size:13.5px; color:var(--sand); line-height:1.25; }
+.result-partno{ margin:0 0 5px; font-size:11px; color:var(--sand-dim); font-weight:500; letter-spacing:.2px; }
+.cat-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:5px; }
+.result-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+.result-price{ font-family:var(--font-d); font-size:15px; color:var(--cat-yellow); font-weight:600; }
+.avail-row{ font-size:10.5px; color:var(--sand-dim); display:flex; gap:10px; }
+.avail-row .in-stock{ color:#5FD97F; font-weight:600; }
+.result-links{ display:flex; gap:12px; font-size:11.5px; font-weight:600; color:var(--sand-dim); flex-wrap:wrap; }
+.result-links button{ background:none; border:none; color:var(--sand-dim); border-bottom:1px solid var(--mud-600); padding:0 0 1px; cursor:pointer; min-height:24px; }
+.result-links button.bookmarked{ color:var(--cat-yellow); border-color:var(--cat-yellow); }
+.card-actions{ display:flex; gap:8px; }
+.add-cart-btn{ flex:1; height:44px; border-radius:var(--r-sm); border:none; background:var(--cat-yellow); color:var(--ink);
+  font-weight:700; font-size:12.5px; letter-spacing:.2px; text-transform:uppercase; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer; min-height:44px; }
+.add-cart-btn.added{ background:#5FD97F; }
+
+.empty-state{ margin:10px 16px; padding:16px; background:var(--mud-700); border:1px solid var(--mud-600); border-radius:var(--r-md); text-align:center; }
+.empty-state h3{ margin:0 0 6px; font-family:var(--font-d); font-size:13.5px; color:var(--sand); text-transform:uppercase; letter-spacing:.4px; }
+.empty-state ul{ margin:8px 0 0; padding:0; list-style:none; font-size:12px; color:var(--sand-dim); display:flex; flex-direction:column; gap:5px; }
+.empty-state li::before{ content:'— '; color:var(--cat-yellow); }
+
+/* ============================================================================
+   TAB 1 — TRAIN THE AI
+   ============================================================================ */
+.train-scroll{ flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.train-stage{ padding:16px 18px 26px; display:flex; flex-direction:column; gap:16px; }
+
+.challenge-card{ background:linear-gradient(160deg,var(--mud-700),var(--mud-800)); border:1px solid var(--mud-600); border-radius:var(--r-lg); padding:18px; text-align:center; }
+.challenge-eyebrow{ font-size:10.5px; letter-spacing:2px; text-transform:uppercase; color:var(--cat-yellow); font-weight:700; margin-bottom:8px; }
+.challenge-name{ font-family:var(--font-d); font-size:22px; color:var(--sand); text-transform:uppercase; letter-spacing:.4px; margin:0 0 6px; }
+.challenge-sub{ font-size:12.5px; color:var(--sand-dim); margin:0 0 16px; }
+.difficulty-tag{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; letter-spacing:.3px; padding:5px 11px; border-radius:20px; margin-bottom:14px; }
+.difficulty-tag.easy{ background:rgba(47,168,79,.14); color:#5FD97F; }
+.difficulty-tag.medium{ background:rgba(255,205,17,.14); color:var(--cat-yellow); }
+.difficulty-tag.expert{ background:rgba(211,47,47,.14); color:#F08080; }
+
+.countdown-num{ font-family:var(--font-d); font-size:64px; color:var(--cat-yellow); text-align:center; margin:14px 0; animation:pulseNum .5s var(--ease-spring); text-shadow:0 0 30px rgba(255,205,17,.4); }
+@keyframes pulseNum{ from{ transform:scale(1.6); opacity:0; } to{ transform:scale(1); opacity:1; } }
+
+.timer-ring-wrap{ display:flex; align-items:center; justify-content:center; margin:6px 0 4px; }
+.timer-ring{ transform:rotate(-90deg); }
+.timer-ring circle{ fill:none; }
+.timer-ring .bg{ stroke:var(--mud-600); stroke-width:5; }
+.timer-ring .fg{ stroke:var(--cat-yellow); stroke-width:5; stroke-linecap:round; transition:stroke-dashoffset 1s linear; }
+.timer-text{ position:absolute; font-family:var(--font-d); font-size:18px; color:var(--sand); }
+.timer-wrap-inner{ position:relative; display:flex; align-items:center; justify-content:center; }
+
+.train-canvas-wrap{ position:relative; height:280px; margin:0; border-radius:var(--r-lg);
+  background:radial-gradient(120% 100% at 50% 0%,#35312A 0%,#2A2620 55%,#24211C 100%);
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.55); overflow:hidden; touch-action:none; }
+
+.analyzing-box{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:40px 20px; }
+.analyzing-ring{ width:56px; height:56px; border-radius:50%; border:4px solid var(--mud-600); border-top-color:var(--cat-yellow); animation:spin .8s linear infinite; }
+.analyzing-msg{ font-family:var(--font-d); font-size:13px; letter-spacing:1px; text-transform:uppercase; color:var(--sand-dim); text-align:center; min-height:18px; }
+
+.result-hero{ text-align:center; padding:8px 0 4px; }
+.result-hero .big-score{ font-family:var(--font-d); font-size:52px; color:var(--cat-yellow); line-height:1; margin:8px 0 4px; }
+.result-hero .score-label{ font-size:13px; color:var(--sand-dim); font-weight:600; }
+.points-earned{ display:inline-flex; align-items:center; gap:6px; background:rgba(255,205,17,.1); border:1px solid rgba(255,205,17,.3);
+  color:var(--cat-yellow); font-weight:700; font-size:12px; padding:6px 13px; border-radius:20px; margin-top:12px; }
+
+.gallery-note{ background:var(--mud-700); border:1px solid var(--mud-600); border-radius:var(--r-md); padding:12px 14px; font-size:12px; color:var(--sand-dim); }
+.gallery-note strong{ color:var(--sand); }
+
+.doodle-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.doodle-cell{ aspect-ratio:1; background:linear-gradient(160deg,#24211c,#171512); border:1px solid var(--mud-600); border-radius:var(--r-sm);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s ease; padding:8px; }
+.doodle-cell:active{ transform:scale(.94); }
+.doodle-cell svg{ width:100%; height:100%; }
+
+.badges-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+.achv-badge{ display:flex; align-items:center; gap:9px; background:var(--mud-700); border:1px solid var(--mud-600); border-radius:var(--r-sm); padding:10px; opacity:.45; }
+.achv-badge.unlocked{ opacity:1; border-color:rgba(255,205,17,.4); }
+.achv-icon{ width:30px; height:30px; border-radius:50%; background:var(--mud-800); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.achv-badge.unlocked .achv-icon{ background:var(--cat-yellow); }
+.achv-badge.unlocked .achv-icon svg *{ stroke:var(--ink); }
+.achv-name{ font-size:11.5px; font-weight:700; color:var(--sand); line-height:1.2; }
+.achv-desc{ font-size:10px; color:var(--sand-dim); margin-top:1px; }
+
+.stat-row{ display:flex; gap:8px; }
+.stat-box{ flex:1; background:var(--mud-700); border:1px solid var(--mud-600); border-radius:var(--r-sm); padding:12px; text-align:center; }
+.stat-box .num{ font-family:var(--font-d); font-size:20px; color:var(--cat-yellow); }
+.stat-box .lbl{ font-size:10px; color:var(--sand-dim); margin-top:2px; letter-spacing:.3px; text-transform:uppercase; }
+
+.next-challenge-btn{ margin-top:2px; }
+
+/* enlarged doodle dialog */
+.doodle-dialog-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.7); opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:50;
+  display:flex; align-items:center; justify-content:center; padding:40px; }
+.doodle-dialog-backdrop.show{ opacity:1; pointer-events:auto; }
+.doodle-dialog{ background:var(--mud-700); border:1px solid var(--mud-600); border-radius:var(--r-lg); padding:20px; width:100%; max-width:260px; text-align:center; }
+.doodle-dialog svg{ width:140px; height:140px; margin:0 auto 10px; display:block; }
+.doodle-dialog .style-name{ font-family:var(--font-d); color:var(--sand); font-size:14px; letter-spacing:.4px; text-transform:uppercase; }
+.doodle-dialog .style-desc{ font-size:11.5px; color:var(--sand-dim); margin-top:4px; }
+
+.results-list::-webkit-scrollbar, .train-scroll::-webkit-scrollbar{ width:5px; }
+.results-list::-webkit-scrollbar-thumb, .train-scroll::-webkit-scrollbar-thumb{ background:var(--mud-600); border-radius:4px; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="stage-label">Cat&nbsp;Digital Concept &middot; Field Prototype<br>CAT Sketch Search™ — "Search Parts by Drawing"</div>
+
+  <div class="phone">
+    <div class="screen">
+
+      <!-- ============================== HEADER ============================== -->
+      <header class="app-header">
+        <div class="brand-tag">
+          <div class="brand-mark">C</div>
+          <div class="brand-copy">
+            <h1 id="headerTitle">Sketch Search</h1>
+            <p id="headerSub">Draw the part you're looking for</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="points-pill" id="pointsPill" title="AI Training Points earned this session">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2 14.5 9 22 9 16 13.5 18 21 12 16.5 6 21 8 13.5 2 9 9.5 9Z" fill="#FFCD11"/></svg>
+            <span id="pointsCount">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ============================== TAB 2: SKETCH SEARCH ============================== -->
+      <section class="view active" id="view-search" aria-label="Sketch Search">
+        <div class="search-scroll">
+          <div class="section-title">
+            <h2>Sketch Search</h2>
+            <p>Draw the shape. AI matches the part.</p>
+          </div>
+
+          <div class="canvas-wrap" id="searchCanvasWrap">
+            <canvas id="searchCanvas"></canvas>
+            <div class="grit-overlay"></div>
+            <div class="canvas-hint" id="searchHint">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none"><path d="M4 17.5L14.5 7 17 9.5 6.5 20H4v-2.5z" stroke="#C9C3B6" stroke-width="1.4" stroke-linejoin="round"/><path d="M13 8.5 15.5 11" stroke="#C9C3B6" stroke-width="1.4"/></svg>
+              <strong>Trace the worn part</strong>
+              <span>e.g. bucket tooth, seal, roller</span>
+            </div>
+            <div class="scan-sweep" id="searchScanSweep">
+              <div class="scan-line"></div>
+              <div class="scan-label" id="searchScanLabel">Scanning Geometry...</div>
+            </div>
+          </div>
+
+          <div class="live-preview" id="livePreview" aria-live="polite"></div>
+
+          <div class="toolbar">
+            <button class="tool-btn undo" id="searchUndo" aria-label="Undo last stroke">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 7 4 12l5 5M4 12h11a5 5 0 0 1 0 10h-1" stroke="#F5F3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="tool-btn" id="searchErase">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 3 3 16l5 5h10l3-3M9 20h11" stroke="#F5F3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Erase All</span>
+            </button>
+          </div>
+
+          <div class="search-zone">
+            <button class="btn-primary" id="searchBtn" style="width:100%;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="searchIcon"><circle cx="11" cy="11" r="7" stroke="#111" stroke-width="2.4"/><path d="m20 20-3.5-3.5" stroke="#111" stroke-width="2.4" stroke-linecap="round"/></svg>
+              <span id="searchBtnLabel">Search Part</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Results Sheet -->
+        <div class="sheet-backdrop" id="searchBackdrop"></div>
+        <div class="sheet" id="searchSheet">
+          <div class="sheet-grabber"></div>
+          <div class="sheet-close" id="searchSheetClose" role="button" aria-label="Close results">&times;</div>
+          <div class="section-title" style="padding-top:2px;">
+            <h2 style="font-size:14.5px;">Matched Components</h2>
+            <p id="resultCount">0 results</p>
+          </div>
+          <div class="filter-row" id="filterRow"></div>
+          <div class="results-list" id="resultsList"></div>
+        </div>
+      </section>
+
+      <!-- ============================== TAB 1: TRAIN THE AI ============================== -->
+      <section class="view" id="view-train" aria-label="Train the AI">
+        <div class="train-scroll">
+          <div class="train-stage" id="trainStage"><!-- injected per state --></div>
+        </div>
+      </section>
+
+      <!-- ============================== BOTTOM NAV ============================== -->
+      <nav class="bottom-nav">
+        <button class="nav-btn active" id="navTrain" aria-label="Train the AI tab">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3 4 7v6c0 5 3.5 7.5 8 8 4.5-.5 8-3 8-8V7l-8-4Z" stroke="#C9C3B6" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#C9C3B6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Train the AI</span>
+        </button>
+        <button class="nav-btn" id="navSearch" aria-label="Sketch Search tab">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#C9C3B6" stroke-width="1.8"/><path d="m20 20-3.5-3.5" stroke="#C9C3B6" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Sketch Search</span>
+        </button>
+      </nav>
+
+      <!-- toast + doodle enlarge dialog live at the screen level -->
+      <div class="toast" id="toast"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="toastText">Done</span></div>
+
+      <div class="doodle-dialog-backdrop" id="doodleBackdrop">
+        <div class="doodle-dialog" id="doodleDialog"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================================
+   CAT SKETCH SEARCH™ — APP LOGIC
+   Structure:
+     0. Utilities & shared canvas engine (quadraticCurveTo smoothing)
+     1. Parts database (20 items)
+     2. TAB 2 — Sketch Search (draw → live preview → search → results sheet)
+     3. TAB 1 — Train the AI (challenge → countdown → draw → analyze → result → gallery)
+     4. Bottom nav / view switching
+     5. Shared toast + doodle dialog
+   NOTE: This is a front-end simulation. "Match %", geometry analysis, and
+   community doodles are mocked client-side — see closing notes for what a
+   production build would need to replace.
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   0. UTILITIES
+--------------------------------------------------------------------------- */
+function rand(min, max){ return Math.random() * (max - min) + min; }
+function randInt(min, max){ return Math.floor(rand(min, max + 1)); }
+function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
+
+/* Reusable smoothed-stroke drawing engine. Each canvas instance gets its own
+   strokes[] array (undo-able) via createCanvasEngine(). */
+function createCanvasEngine(canvasEl, wrapEl, hintEl){
+  const ctx = canvasEl.getContext('2d');
+  let strokes = [];
+  let currentStroke = [];
+  let isDrawing = false;
+  let onStrokeEnd = null;
+
+  function resize(){
+    const rect = wrapEl.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvasEl.width = rect.width * dpr;
+    canvasEl.height = rect.height * dpr;
+    canvasEl.style.width = rect.width + 'px';
+    canvasEl.style.height = rect.height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    redraw();
+  }
+
+  function getPos(e){
+    const rect = canvasEl.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  }
+
+  function style(){
+    ctx.strokeStyle = '#F5F3EE';
+    ctx.lineWidth = 4.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(245,243,238,.35)';
+    ctx.shadowBlur = 6;
+  }
+
+  /* Quadratic-curve midpoint smoothing: turns raw pointer samples into a
+     fluid pencil line instead of a jagged polyline. */
+  function drawStroke(points){
+    if (points.length < 2) return;
+    style();
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length - 1; i++){
+      const midX = (points[i].x + points[i+1].x) / 2;
+      const midY = (points[i].y + points[i+1].y) / 2;
+      ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
+    }
+    ctx.stroke();
+  }
+
+  function redraw(){
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    strokes.forEach(drawStroke);
+    if (isDrawing) drawStroke(currentStroke);
+    if (hintEl) hintEl.classList.toggle('hidden', strokes.length > 0 || currentStroke.length > 0);
+  }
+
+  function start(e){ e.preventDefault(); isDrawing = true; currentStroke = [getPos(e)]; if (hintEl) hintEl.classList.add('hidden'); }
+  function move(e){ if (!isDrawing) return; e.preventDefault(); currentStroke.push(getPos(e)); redraw(); }
+  function end(){
+    if (!isDrawing) return;
+    isDrawing = false;
+    if (currentStroke.length > 1) strokes.push(currentStroke);
+    currentStroke = [];
+    redraw();
+    if (onStrokeEnd) onStrokeEnd(strokes.length);
+  }
+
+  ['mousedown','touchstart'].forEach(evt => canvasEl.addEventListener(evt, start, {passive:false}));
+  ['mousemove','touchmove'].forEach(evt => canvasEl.addEventListener(evt, move, {passive:false}));
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt => canvasEl.addEventListener(evt, end));
+  window.addEventListener('resize', resize);
+
+  return {
+    resize,
+    clear(){ strokes = []; currentStroke = []; redraw(); },
+    undo(){ strokes.pop(); redraw(); },
+    strokeCount(){ return strokes.length; },
+    onEnd(fn){ onStrokeEnd = fn; }
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   ICON LIBRARY (custom line-art — deliberately not real product photography,
+   so this stays presentation-safe without licensed CAT imagery)
+--------------------------------------------------------------------------- */
+const ICONS = {
+  bucketTooth: `<svg viewBox="0 0 64 64" fill="none"><path d="M14 50 20 14h10l3 12 3-12h10l6 36-8 4-4-16-4 16h-10l-4-16-4 16-8-4Z" fill="#FFCD11" fill-opacity=".15" stroke="#FFCD11" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  cuttingEdge: `<svg viewBox="0 0 64 64" fill="none"><path d="M8 40h48l-6 12H14l-6-12Z" fill="#FFCD11" fill-opacity=".15" stroke="#FFCD11" stroke-width="2.2" stroke-linejoin="round"/><path d="M8 40 14 16h36l6 24" stroke="#FFCD11" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  trackLink: `<svg viewBox="0 0 64 64" fill="none"><rect x="8" y="26" width="48" height="14" rx="3" fill="#ECECEC" fill-opacity=".12" stroke="#ECECEC" stroke-width="2.2"/><path d="M8 26 16 12h32l8 14" stroke="#ECECEC" stroke-width="2.2" stroke-linejoin="round"/><circle cx="20" cy="33" r="2.4" fill="#ECECEC"/><circle cx="32" cy="33" r="2.4" fill="#ECECEC"/><circle cx="44" cy="33" r="2.4" fill="#ECECEC"/></svg>`,
+  idler: `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="22" stroke="#ECECEC" stroke-width="2.2" fill="#ECECEC" fill-opacity=".1"/><circle cx="32" cy="32" r="7" fill="#ECECEC"/><path d="M32 10v8M32 46v8M10 32h8M46 32h8" stroke="#ECECEC" stroke-width="2"/></svg>`,
+  gear: `<svg viewBox="0 0 64 64" fill="none"><path d="M32 8v6M32 50v6M8 32h6M50 32h6M14 14l4 4M46 46l4 4M14 50l4-4M46 18l4-4" stroke="#ECECEC" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="32" r="16" stroke="#ECECEC" stroke-width="2.2" fill="#ECECEC" fill-opacity=".1"/><circle cx="32" cy="32" r="5" fill="#ECECEC"/></svg>`,
+  hydCircle: `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="20" stroke="#E67E22" stroke-width="2.2" fill="#E67E22" fill-opacity=".1"/><circle cx="32" cy="32" r="10" stroke="#E67E22" stroke-width="2.2"/></svg>`,
+  cylinder: `<svg viewBox="0 0 64 64" fill="none"><rect x="10" y="22" width="30" height="20" rx="4" stroke="#E67E22" stroke-width="2.2" fill="#E67E22" fill-opacity=".1"/><rect x="40" y="29" width="16" height="6" fill="#E67E22" fill-opacity=".3" stroke="#E67E22" stroke-width="1.6"/></svg>`,
+  hose: `<svg viewBox="0 0 64 64" fill="none"><path d="M8 20c8 0 8 10 16 10s8-10 16-10 8 10 16 10" stroke="#E67E22" stroke-width="3.2" stroke-linecap="round" fill="none"/><path d="M8 44c8 0 8-10 16-10s8 10 16 10 8-10 16-10" stroke="#E67E22" stroke-width="3.2" stroke-linecap="round" fill="none" opacity=".5"/></svg>`,
+  filterEl: `<svg viewBox="0 0 64 64" fill="none"><rect x="18" y="8" width="28" height="48" rx="6" fill="#2FA84F" fill-opacity=".1" stroke="#2FA84F" stroke-width="2.2"/><path d="M24 8v48M32 8v48M40 8v48" stroke="#2FA84F" stroke-width="1.6" stroke-opacity=".6"/></svg>`,
+  belt: `<svg viewBox="0 0 64 64" fill="none"><circle cx="20" cy="32" r="11" stroke="#2FA84F" stroke-width="2.2" fill="#2FA84F" fill-opacity=".1"/><circle cx="44" cy="32" r="7" stroke="#2FA84F" stroke-width="2.2" fill="#2FA84F" fill-opacity=".1"/><path d="M20 21c14-4 20 4 24 4M20 43c14 4 20-4 24-4" stroke="#2FA84F" stroke-width="2"/></svg>`,
+  injector: `<svg viewBox="0 0 64 64" fill="none"><path d="M24 8h16v18l-4 6v20a4 4 0 0 1-8 0V32l-4-6Z" fill="#2FA84F" fill-opacity=".1" stroke="#2FA84F" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  alternator: `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="18" stroke="#ECECEC" stroke-width="2.2" fill="#ECECEC" fill-opacity=".1"/><path d="M32 18v6M32 40v6M18 32h6M40 32h6" stroke="#ECECEC" stroke-width="2" stroke-linecap="round"/><circle cx="32" cy="32" r="5" fill="#ECECEC"/></svg>`,
+  bearing: `<svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="21" stroke="#C9C3B6" stroke-width="2.2"/><circle cx="32" cy="32" r="11" stroke="#C9C3B6" stroke-width="2.2"/><circle cx="32" cy="11" r="3" fill="#C9C3B6"/><circle cx="32" cy="53" r="3" fill="#C9C3B6"/><circle cx="11" cy="32" r="3" fill="#C9C3B6"/><circle cx="53" cy="32" r="3" fill="#C9C3B6"/></svg>`
+};
+const CAT_COLOR = { 'Ground Engaging Tools':'#FFCD11', 'Undercarriage':'#ECECEC', 'Hydraulics':'#E67E22', 'Engine':'#2FA84F', 'Electrical':'#ECECEC', 'Bearings':'#C9C3B6' };
+
+/* ---------------------------------------------------------------------------
+   1. PARTS DATABASE — 20 realistic Cat-style parts
+--------------------------------------------------------------------------- */
+const PARTS_DB = [
+  { name:"Bucket Tooth — Standard Duty", partNo:"8E-8452", price:64.90, category:"Ground Engaging Tools", icon:ICONS.bucketTooth, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"Next-day, 2 in stock" },
+  { name:"Cutting Edge, Bolt-On", partNo:"6Y-3241", price:189.00, category:"Ground Engaging Tools", icon:ICONS.cuttingEdge, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"3–5 days, ships from DC" },
+  { name:"Track Roller Assembly", partNo:"4T-1719", price:268.40, category:"Undercarriage", icon:ICONS.idler, dealer:"Cat Dealer #226 — Broken Hill", delivery:"Next-day, 1 in stock" },
+  { name:"Track Link, Sealed & Lubricated", partNo:"3G-5540", price:312.00, category:"Undercarriage", icon:ICONS.trackLink, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"2 days" },
+  { name:"Idler Wheel, Front", partNo:"5R-9082", price:241.10, category:"Undercarriage", icon:ICONS.idler, dealer:"Cat Dealer #310 — Perth", delivery:"Next-day" },
+  { name:"Final Drive Gear", partNo:"2P-9033", price:198.60, category:"Undercarriage", icon:ICONS.gear, dealer:"Cat Dealer #226 — Broken Hill", delivery:"5–7 days, special order" },
+  { name:"Hydraulic Cylinder Seal Kit", partNo:"9J-2261", price:145.75, category:"Hydraulics", icon:ICONS.hydCircle, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"Next-day, 4 in stock" },
+  { name:"Hydraulic Hose, High-Pressure", partNo:"7K-4410", price:88.30, category:"Hydraulics", icon:ICONS.hose, dealer:"Cat Dealer #310 — Perth", delivery:"Next-day, 6 in stock" },
+  { name:"Hydraulic Pump, Main", partNo:"3H-7724", price:1240.00, category:"Hydraulics", icon:ICONS.hydCircle, dealer:"Cat Dealer #310 — Perth", delivery:"7–10 days, special order" },
+  { name:"Lift Cylinder, Boom", partNo:"6D-2299", price:895.50, category:"Hydraulics", icon:ICONS.cylinder, dealer:"Cat Dealer #226 — Broken Hill", delivery:"5 days" },
+  { name:"O-Ring Kit, Multi-Size", partNo:"1U-6547", price:22.40, category:"Hydraulics", icon:ICONS.hydCircle, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"Next-day, 12 in stock" },
+  { name:"Oil Pump Gear", partNo:"5P-8813", price:76.20, category:"Engine", icon:ICONS.gear, dealer:"Cat Dealer #310 — Perth", delivery:"2 days" },
+  { name:"Fuel Injector", partNo:"4W-7018", price:412.00, category:"Engine", icon:ICONS.injector, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"3 days" },
+  { name:"Cylinder Head, Reman", partNo:"2Z-5561", price:1680.00, category:"Engine", icon:ICONS.cylinder, dealer:"Cat Dealer #226 — Broken Hill", delivery:"7 days, special order" },
+  { name:"Fan Belt, Serpentine", partNo:"6T-9027", price:34.60, category:"Engine", icon:ICONS.belt, dealer:"Cat Dealer #310 — Perth", delivery:"Next-day, 8 in stock" },
+  { name:"Primary Fuel Filter Element", partNo:"1R-0750", price:38.20, category:"Engine", icon:ICONS.filterEl, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"Next-day, 20 in stock" },
+  { name:"Fuel Pump, Transfer", partNo:"3D-8842", price:305.00, category:"Engine", icon:ICONS.hydCircle, dealer:"Cat Dealer #226 — Broken Hill", delivery:"4 days" },
+  { name:"Radiator Hose, Upper", partNo:"7F-2210", price:54.90, category:"Engine", icon:ICONS.hose, dealer:"Cat Dealer #310 — Perth", delivery:"Next-day, 5 in stock" },
+  { name:"Alternator, 24V", partNo:"8B-6653", price:520.00, category:"Electrical", icon:ICONS.alternator, dealer:"Cat Dealer #114 — Kalgoorlie", delivery:"3 days" },
+  { name:"Bearing Kit, Sealed", partNo:"9L-3390", price:112.75, category:"Bearings", icon:ICONS.bearing, dealer:"Cat Dealer #226 — Broken Hill", delivery:"Next-day, 3 in stock" }
+];
+const CATEGORIES = ["All","Ground Engaging Tools","Undercarriage","Hydraulics","Engine","Electrical","Bearings"];
+
+function scoredMatches(count){
+  return [...PARTS_DB]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count)
+    .map(p => ({ ...p, match: randInt(62, 98) }))
+    .sort((a,b) => b.match - a.match);
+}
+
+/* ---------------------------------------------------------------------------
+   2. TAB 2 — SKETCH SEARCH
+--------------------------------------------------------------------------- */
+const searchCanvas = document.getElementById('searchCanvas');
+const searchWrap = document.getElementById('searchCanvasWrap');
+const searchHint = document.getElementById('searchHint');
+const engine = createCanvasEngine(searchCanvas, searchWrap, searchHint);
+
+const livePreview = document.getElementById('livePreview');
+let lastResults = [];
+let currentFilter = "All";
+let bookmarked = new Set();
+
+/* Live preview: after every completed stroke, recompute a lightweight mock
+   top-3 so the UI feels responsive before the person even taps Search. */
+engine.onEnd((count) => {
+  if (count === 0){ livePreview.classList.remove('show'); livePreview.innerHTML = ''; return; }
+  const preview = scoredMatches(3);
+  livePreview.innerHTML = preview.map(p => `
+    <div class="preview-chip">
+      <span class="dot">${p.icon}</span>
+      <span class="txt">${p.name.split(',')[0].split(' — ')[0]} <span class="pct">${p.match}%</span></span>
+    </div>`).join('');
+  livePreview.classList.add('show');
+});
+
+document.getElementById('searchUndo').addEventListener('click', () => {
+  engine.undo();
+  if (engine.strokeCount() === 0){ livePreview.classList.remove('show'); livePreview.innerHTML=''; }
+});
+document.getElementById('searchErase').addEventListener('click', () => {
+  engine.clear();
+  livePreview.classList.remove('show'); livePreview.innerHTML = '';
+  closeSheet(searchSheet, searchBackdrop);
+  clearEmptyState();
+});
+
+const searchBtn = document.getElementById('searchBtn');
+const searchSweep = document.getElementById('searchScanSweep');
+const searchScanLabel = document.getElementById('searchScanLabel');
+const searchSheet = document.getElementById('searchSheet');
+const searchBackdrop = document.getElementById('searchBackdrop');
+const SCAN_MSGS = ["Scanning geometry...", "Finding similar parts...", "Checking catalog...", "Matching silhouettes..."];
+
+function clearEmptyState(){
+  const existing = document.getElementById('searchEmptyState');
+  if (existing) existing.remove();
+}
+
+searchBtn.addEventListener('click', () => {
+  clearEmptyState();
+  if (engine.strokeCount() === 0){
+    const box = document.createElement('div');
+    box.className = 'empty-state';
+    box.id = 'searchEmptyState';
+    box.innerHTML = `
+      <h3>Can't identify a sketch yet</h3>
+      <ul>
+        <li>Draw slower, in one continuous outline</li>
+        <li>Trace just the silhouette, skip inner detail</li>
+        <li>Erase extra strokes and try again</li>
+        <li>Or search by part number instead</li>
+      </ul>`;
+    document.querySelector('.search-zone').before(box);
+    return;
+  }
+
+  searchBtn.disabled = true;
+  searchBtn.innerHTML = `<span class="spinner"></span><span>Searching...</span>`;
+  searchSweep.classList.add('active');
+  let msgIdx = 0;
+  searchScanLabel.textContent = SCAN_MSGS[0];
+  const msgTimer = setInterval(() => { msgIdx = (msgIdx+1) % SCAN_MSGS.length; searchScanLabel.textContent = SCAN_MSGS[msgIdx]; }, 380);
+
+  setTimeout(() => {
+    clearInterval(msgTimer);
+    searchSweep.classList.remove('active');
+    searchBtn.disabled = false;
+    searchBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#111" stroke-width="2.4"/><path d="m20 20-3.5-3.5" stroke="#111" stroke-width="2.4" stroke-linecap="round"/></svg><span>Search Part</span>`;
+    lastResults = scoredMatches(6);
+    currentFilter = "All";
+    renderFilters();
+    renderResults();
+    openSheet(searchSheet, searchBackdrop);
+  }, 1500);
+});
+
+function renderFilters(){
+  const present = ["All", ...new Set(lastResults.map(r => r.category))];
+  const row = document.getElementById('filterRow');
+  row.innerHTML = present.map(c => `<button class="filter-chip ${c===currentFilter?'active':''}" data-cat="${c}">${c}</button>`).join('');
+  row.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => { currentFilter = chip.dataset.cat; renderFilters(); renderResults(); });
+  });
+}
+
+function renderResults(){
+  const list = currentFilter === "All" ? lastResults : lastResults.filter(r => r.category === currentFilter);
+  document.getElementById('resultCount').textContent = `${list.length} result${list.length!==1?'s':''}`;
+  const container = document.getElementById('resultsList');
+  container.innerHTML = list.map((p, i) => {
+    const dot = CAT_COLOR[p.category] || '#C9C3B6';
+    const isBookmarked = bookmarked.has(p.partNo);
+    return `
+    <div class="result-card">
+      <div class="result-top">
+        <div class="result-thumb">${p.icon}</div>
+        <div class="result-meta">
+          <p class="result-name">${p.name}</p>
+          <p class="result-partno"><span class="cat-dot" style="background:${dot}"></span>PART NO. ${p.partNo} &middot; ${p.category}</p>
+          <div class="result-row">
+            <span class="result-price">$${p.price.toFixed(2)}</span>
+            <span class="badge ${p.match>=85?'high':p.match>=70?'mid':'low'}">${p.match}% Match</span>
+          </div>
+        </div>
+      </div>
+      <div class="avail-row"><span class="in-stock">${p.delivery.includes('stock')?'● In stock':'○ Special order'}</span><span>${p.delivery}</span></div>
+      <div class="result-row">
+        <div class="result-links">
+          <button type="button">View Diagram</button>
+          <button type="button">Compare</button>
+          <button type="button" class="bookmark-btn ${isBookmarked?'bookmarked':''}" data-part="${p.partNo}">${isBookmarked?'★ Saved':'☆ Save'}</button>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="add-cart-btn" data-idx="${i}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 3h2l2.6 13.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L22 8H6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Add to Cart
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+
+  container.querySelectorAll('.add-cart-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const part = list[btn.dataset.idx];
+      btn.classList.add('added');
+      btn.innerHTML = '✓ Added';
+      showToast(`${part.partNo} added to cart`);
+      setTimeout(() => { btn.classList.remove('added'); btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 3h2l2.6 13.4a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 2-1.6L22 8H6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Add to Cart`; }, 1500);
+    });
+  });
+  container.querySelectorAll('.bookmark-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pn = btn.dataset.part;
+      if (bookmarked.has(pn)){ bookmarked.delete(pn); btn.classList.remove('bookmarked'); btn.textContent = '☆ Save'; }
+      else { bookmarked.add(pn); btn.classList.add('bookmarked'); btn.textContent = '★ Saved'; showToast('Saved to favorites'); }
+    });
+  });
+}
+
+function openSheet(sheet, backdrop){ sheet.classList.add('open'); backdrop.classList.add('show'); }
+function closeSheet(sheet, backdrop){ sheet.classList.remove('open'); backdrop.classList.remove('show'); }
+document.getElementById('searchSheetClose').addEventListener('click', () => closeSheet(searchSheet, searchBackdrop));
+searchBackdrop.addEventListener('click', () => closeSheet(searchSheet, searchBackdrop));
+
+/* ---------------------------------------------------------------------------
+   3. TAB 1 — TRAIN THE AI (state machine)
+--------------------------------------------------------------------------- */
+const CHALLENGE_PARTS = [
+  { name:"Bucket Tooth", difficulty:"easy", category:"Ground Engaging Tools" },
+  { name:"Hydraulic Seal", difficulty:"medium", category:"Hydraulics" },
+  { name:"Track Roller", difficulty:"medium", category:"Undercarriage" },
+  { name:"Fuel Injector", difficulty:"expert", category:"Engine" },
+  { name:"Idler Wheel", difficulty:"easy", category:"Undercarriage" },
+  { name:"Cylinder Head", difficulty:"expert", category:"Engine" }
+];
+
+let session = { points:0, sketches:0, categoryCounts:{}, accuracyHistory:[] };
+let trainEngine = null;
+let trainTimerInterval = null;
+let currentChallenge = null;
+const trainStage = document.getElementById('trainStage');
+
+function updatePointsPill(){ document.getElementById('pointsCount').textContent = session.points; }
+
+function renderIntro(){
+  currentChallenge = pick(CHALLENGE_PARTS);
+  trainStage.innerHTML = `
+    <div class="challenge-card">
+      <div class="challenge-eyebrow">Today's Challenge</div>
+      <span class="difficulty-tag ${currentChallenge.difficulty}">${currentChallenge.difficulty.toUpperCase()}</span>
+      <h2 class="challenge-name">Draw a<br>${currentChallenge.name}</h2>
+      <p class="challenge-sub">You'll have 10 seconds. Sketch from memory — there's no wrong way.</p>
+      <button class="btn-primary" id="startChallengeBtn" style="width:100%;">Start Challenge</button>
+    </div>
+    <div class="gallery-note"><strong>Why this matters:</strong> your sketch helps CAT AI learn how mechanics naturally draw this part, improving Sketch Search for every customer.</div>
+    ${renderStatsBlock()}
+    ${renderAchievementsBlock()}
+  `;
+  document.getElementById('startChallengeBtn').addEventListener('click', renderCountdown);
+}
+
+function renderStatsBlock(){
+  const avgAcc = session.accuracyHistory.length ? Math.round(session.accuracyHistory.reduce((a,b)=>a+b,0)/session.accuracyHistory.length) : 0;
+  return `
+    <div class="stat-row">
+      <div class="stat-box"><div class="num">${session.sketches}</div><div class="lbl">Sketches</div></div>
+      <div class="stat-box"><div class="num">${avgAcc || '—'}${avgAcc?'%':''}</div><div class="lbl">Avg Accuracy</div></div>
+      <div class="stat-box"><div class="num">${session.points}</div><div class="lbl">AI Points</div></div>
+    </div>`;
+}
+
+const ACHIEVEMENTS = [
+  { id:'first', name:'First Sketch', desc:'Complete 1 challenge', test:s => s.sketches >= 1 },
+  { id:'ten', name:'10 Sketches', desc:'Complete 10 challenges', test:s => s.sketches >= 10 },
+  { id:'bucket', name:'Bucket Master', desc:'3 Ground Tool sketches', test:s => (s.categoryCounts['Ground Engaging Tools']||0) >= 3 },
+  { id:'hydraulic', name:'Hydraulic Hero', desc:'3 Hydraulics sketches', test:s => (s.categoryCounts['Hydraulics']||0) >= 3 },
+  { id:'undercarriage', name:'Undercarriage Pro', desc:'3 Undercarriage sketches', test:s => (s.categoryCounts['Undercarriage']||0) >= 3 },
+  { id:'expert', name:'Expert Mechanic', desc:'Complete an Expert challenge', test:s => s._lastExpert === true }
+];
+
+function renderAchievementsBlock(){
+  return `
+    <div>
+      <div class="section-title" style="padding:0 0 6px;"><h2 style="font-size:13.5px;">Achievements</h2></div>
+      <div class="badges-grid">
+        ${ACHIEVEMENTS.map(a => {
+          const unlocked = a.test(session);
+          return `<div class="achv-badge ${unlocked?'unlocked':''}">
+            <div class="achv-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2 14.5 9 22 9 16 13.5 18 21 12 16.5 6 21 8 13.5 2 9 9.5 9Z" stroke="${unlocked?'#111':'#5A564C'}" stroke-width="1.6" fill="${unlocked?'#111':'none'}" fill-opacity="${unlocked?'0.15':'0'}"/></svg></div>
+            <div><div class="achv-name">${a.name}</div><div class="achv-desc">${a.desc}</div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+function renderCountdown(){
+  trainStage.innerHTML = `<div style="min-height:420px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="challenge-eyebrow">Get Ready</div>
+    <div class="countdown-num" id="cdNum">3</div>
+  </div>`;
+  let n = 3;
+  const cdEl = document.getElementById('cdNum');
+  const iv = setInterval(() => {
+    n -= 1;
+    if (n > 0){ cdEl.textContent = n; cdEl.style.animation='none'; requestAnimationFrame(()=>cdEl.style.animation='pulseNum .5s var(--ease-spring)'); }
+    else if (n === 0){ cdEl.textContent = 'GO'; cdEl.style.animation='none'; requestAnimationFrame(()=>cdEl.style.animation='pulseNum .5s var(--ease-spring)'); }
+    else { clearInterval(iv); renderDrawing(); }
+  }, 700);
+}
+
+function renderDrawing(){
+  const R = 46; // ring radius
+  const circumference = 2 * Math.PI * R;
+  trainStage.innerHTML = `
+    <div class="challenge-eyebrow" style="text-align:center;">Draw: ${currentChallenge.name}</div>
+    <div class="timer-ring-wrap">
+      <div class="timer-wrap-inner">
+        <svg class="timer-ring" width="110" height="110" viewBox="0 0 110 110">
+          <circle class="bg" cx="55" cy="55" r="${R}"></circle>
+          <circle class="fg" id="ringFg" cx="55" cy="55" r="${R}" stroke-dasharray="${circumference}" stroke-dashoffset="0"></circle>
+        </svg>
+        <div class="timer-text" id="timerText">10</div>
+      </div>
+    </div>
+    <div class="train-canvas-wrap" id="trainCanvasWrap">
+      <canvas id="trainCanvas"></canvas>
+    </div>
+    <div class="toolbar" style="padding:2px 0 0;">
+      <button class="tool-btn undo" id="trainUndo" aria-label="Undo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 7 4 12l5 5M4 12h11a5 5 0 0 1 0 10h-1" stroke="#F5F3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="tool-btn" id="trainErase"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 3 3 16l5 5h10l3-3M9 20h11" stroke="#F5F3EE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Erase</span></button>
+      <button class="btn-secondary" id="trainFinish" style="flex:1.4;">Finish Early</button>
+    </div>
+  `;
+  const tc = document.getElementById('trainCanvas');
+  const tw = document.getElementById('trainCanvasWrap');
+  trainEngine = createCanvasEngine(tc, tw, null);
+  trainEngine.resize();
+
+  document.getElementById('trainUndo').addEventListener('click', () => trainEngine.undo());
+  document.getElementById('trainErase').addEventListener('click', () => trainEngine.clear());
+  document.getElementById('trainFinish').addEventListener('click', () => { clearInterval(trainTimerInterval); renderAnalyzing(); });
+
+  let t = 10;
+  const ringFg = document.getElementById('ringFg');
+  const timerText = document.getElementById('timerText');
+  trainTimerInterval = setInterval(() => {
+    t -= 1;
+    timerText.textContent = Math.max(t,0);
+    ringFg.style.strokeDashoffset = circumference * (1 - Math.max(t,0)/10);
+    if (t <= 0){ clearInterval(trainTimerInterval); renderAnalyzing(); }
+  }, 1000);
+}
+
+const ANALYZE_MSGS = ["Analyzing geometry...", "Comparing sketches...", "Finding edges...", "Recognizing silhouette...", "Comparing 24,000 sketches..."];
+function renderAnalyzing(){
+  trainStage.innerHTML = `<div class="analyzing-box">
+    <div class="analyzing-ring"></div>
+    <div class="analyzing-msg" id="analyzeMsg">${ANALYZE_MSGS[0]}</div>
+  </div>`;
+  let i = 0;
+  const msgEl = document.getElementById('analyzeMsg');
+  const iv = setInterval(() => { i = (i+1) % ANALYZE_MSGS.length; msgEl.textContent = ANALYZE_MSGS[i]; }, 300);
+  setTimeout(() => { clearInterval(iv); renderResult(); }, 1500);
+}
+
+function renderResult(){
+  const acc = randInt(58, 97);
+  const pts = 10;
+  session.points += pts;
+  session.sketches += 1;
+  session.categoryCounts[currentChallenge.category] = (session.categoryCounts[currentChallenge.category]||0) + 1;
+  session._lastExpert = currentChallenge.difficulty === 'expert';
+  session.accuracyHistory.push(acc);
+  updatePointsPill();
+
+  trainStage.innerHTML = `
+    <div class="result-hero">
+      <div class="challenge-eyebrow">${acc >= 80 ? 'Great Job!' : acc >= 60 ? 'Nice Try!' : 'Keep Practicing!'}</div>
+      <div class="big-score">${acc}%</div>
+      <div class="score-label">AI Recognition Accuracy</div>
+      <div class="points-earned">+${pts} AI Training Points</div>
+    </div>
+    <button class="btn-primary" id="seeGalleryBtn" style="width:100%;">See How Others Drew It</button>
+  `;
+  document.getElementById('seeGalleryBtn').addEventListener('click', renderGallery);
+}
+
+/* Procedurally generates a small "doodle" — a closed, smoothed random shape —
+   standing in for a real crowdsourced sketch. Styles vary (messy / clean /
+   minimal / detailed) purely by stroke count and jitter, echoing the point
+   that "there is no one correct way to draw a part." */
+function generateDoodleSVG(styleSeed){
+  const jitter = styleSeed.jitter, strokeCount = styleSeed.strokes, size = 100;
+  const cx = size/2, cy = size/2;
+  let paths = '';
+  for (let s = 0; s < strokeCount; s++){
+    const baseR = rand(22, 34);
+    const points = [];
+    const nPts = randInt(6, 10);
+    for (let i = 0; i <= nPts; i++){
+      const ang = (i / nPts) * Math.PI * 2;
+      const r = baseR + rand(-jitter, jitter);
+      points.push({ x: cx + Math.cos(ang) * r + rand(-3,3), y: cy + Math.sin(ang) * r*0.8 + rand(-3,3) });
+    }
+    let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)} `;
+    for (let i = 1; i < points.length - 1; i++){
+      const mx = (points[i].x + points[i+1].x)/2, my = (points[i].y + points[i+1].y)/2;
+      d += `Q ${points[i].x.toFixed(1)} ${points[i].y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)} `;
+    }
+    d += 'Z';
+    paths += `<path d="${d}" fill="none" stroke="#F5F3EE" stroke-width="${rand(1.6,2.6).toFixed(1)}" stroke-linecap="round" stroke-linejoin="round" opacity="${(0.55 + s*0.2).toFixed(2)}"/>`;
+  }
+  return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
+}
+
+const DOODLE_STYLES = [
+  { label:'Quick & minimal', desc:'Single confident outline — fast field sketch', jitter:3, strokes:1 },
+  { label:'Detail-oriented', desc:'Multiple passes tracing wear pattern', jitter:5, strokes:3 },
+  { label:'Rough & messy', desc:'Drawn one-handed, in a hurry', jitter:9, strokes:2 },
+  { label:'Clean & precise', desc:'Careful, symmetrical trace', jitter:2, strokes:1 },
+  { label:'Expert shorthand', desc:'Veteran mechanic — knows the shape by feel', jitter:6, strokes:2 }
+];
+
+function renderGallery(){
+  const doodles = Array.from({length:12}, () => pick(DOODLE_STYLES));
+  trainStage.innerHTML = `
+    <div class="section-title" style="padding:0;"><h2 style="font-size:15px;">How Other Mechanics Drew It</h2><p>${currentChallenge.name} &middot; 12 of 340 community sketches</p></div>
+    <div class="doodle-grid" id="doodleGrid"></div>
+    <div class="gallery-note"><strong>No single right way:</strong> every style here trains the same model, so it recognizes rushed, detailed, and rough sketches alike.</div>
+    ${renderStatsBlock()}
+    ${renderAchievementsBlock()}
+    <button class="btn-primary next-challenge-btn" id="nextChallengeBtn" style="width:100%;">Next Challenge</button>
+  `;
+  const grid = document.getElementById('doodleGrid');
+  doodles.forEach((style) => {
+    const cell = document.createElement('div');
+    cell.className = 'doodle-cell';
+    cell.innerHTML = generateDoodleSVG(style);
+    cell.addEventListener('click', () => showDoodleDialog(style, generateDoodleSVG(style)));
+    grid.appendChild(cell);
+  });
+  document.getElementById('nextChallengeBtn').addEventListener('click', renderIntro);
+}
+
+const doodleBackdrop = document.getElementById('doodleBackdrop');
+const doodleDialog = document.getElementById('doodleDialog');
+function showDoodleDialog(style, svg){
+  doodleDialog.innerHTML = `${svg}<div class="style-name">${style.label}</div><div class="style-desc">${style.desc}</div>`;
+  doodleBackdrop.classList.add('show');
+}
+doodleBackdrop.addEventListener('click', () => doodleBackdrop.classList.remove('show'));
+
+/* ---------------------------------------------------------------------------
+   4. BOTTOM NAV / VIEW SWITCHING
+--------------------------------------------------------------------------- */
+const navTrain = document.getElementById('navTrain');
+const navSearch = document.getElementById('navSearch');
+const viewTrain = document.getElementById('view-train');
+const viewSearch = document.getElementById('view-search');
+const headerTitle = document.getElementById('headerTitle');
+const headerSub = document.getElementById('headerSub');
+
+function switchTab(tab){
+  const isTrain = tab === 'train';
+  navTrain.classList.toggle('active', isTrain);
+  navSearch.classList.toggle('active', !isTrain);
+  viewTrain.classList.toggle('active', isTrain);
+  viewSearch.classList.toggle('active', !isTrain);
+  headerTitle.textContent = isTrain ? 'Train the AI' : 'Sketch Search';
+  headerSub.textContent = isTrain ? 'Help CAT AI learn how mechanics draw' : "Draw the part you're looking for";
+  if (!isTrain) requestAnimationFrame(() => engine.resize());
+}
+navTrain.addEventListener('click', () => switchTab('train'));
+navSearch.addEventListener('click', () => switchTab('search'));
+
+/* ---------------------------------------------------------------------------
+   5. TOAST
+--------------------------------------------------------------------------- */
+const toast = document.getElementById('toast');
+const toastText = document.getElementById('toastText');
+let toastTimer;
+function showToast(msg){
+  toastText.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+/* ---------------------------------------------------------------------------
+   INIT
+--------------------------------------------------------------------------- */
+engine.resize();
+renderIntro();
+updatePointsPill();
+</script>
+</body>
+</html>
